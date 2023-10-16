@@ -80,6 +80,29 @@ Do the same as in ii) but only for trades with counts 100:200 (100th trade to 20
 ```{r}
 # Retrieve sliced data frame from 100 to 200 trades.
 TQ_df_sliced <- data.frame(tqdata[100:200])
+head(TQ_df_sliced)
 
+# Retrieve the 'asks' or 'offers' from data frame.
+asks_2 <- as.numeric(TQ_df_sliced$OFR)
+head(asks_2)
 
+# Retrieve 'bids' from data frame.
+bids_2 <- as.numeric(TQ_df_sliced$BID)
+head(bids_2)
+
+# Compute the 'mid' or middle price between bid and ask.
+mids_2 <- (bids_2 + asks_2) * 0.5
+head(mids_2)
+
+# Establish minimum and maximum prices quoted.
+p_min_2 <- min(as.numeric(TQ_df_sliced$PRICE))
+p_max_2 <- max(as.numeric(TQ_df_sliced$PRICE))
+
+p_min_2
+p_max_2
+
+# Plot trade prices and respective best-bid and best-ask prices using the mid price.
+plot(as.numeric(TQ_df_sliced$PRICE), col = "green", type = "l", ylab = "Trade Price", 
+    xlab = "Trade Number", main = "Price Fluctuation", ylim = c(p_min_2 - 0.2, p_max_2 + 0.2))
+lines(mids, type = "l", col = "blue")
 ```
