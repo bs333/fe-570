@@ -73,3 +73,13 @@ plot(as.numeric(TQ_df$PRICE), col = "green", type = "l", ylab = "Trade Price",
 lines(mids, type = "l", col = "blue")
 ```
 
+##### iii.
+
+Do the same as in ii) but only for trades with counts 100:200 (100th trade to 200th trade).
+
+```{r}
+# Retrieve sliced data frame from 100 to 200 trades.
+TQ_df_sliced <- data.frame(tqdata[100:200])
+
+
+```
