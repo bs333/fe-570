@@ -32,6 +32,7 @@ tail(tqdata)
 How many trades are in the dataset?
 
 ```{r}
+# Retrieve number of trades by counting number of rows in dataset.
 num_of_trades <- nrow(tqdata)
 num_of_trades
 ```
@@ -43,6 +44,32 @@ As seen above, there are 8153 trades in the dataset.
 Plot the trade prices $p_t$ and the best-bid $b_t$ and best-ask prices $a_t$ for the entire dataset.
 
 ```{r}
+# Convert dataset to data frame for easier access.
 TQ_df <- data.frame(Date = index(tqdata), tqdata)
-TQ_df
+head(TQ_df)
+
+# Retrieve the 'asks' or 'offers' from data frame.
+asks <- as.numeric(TQ_df$OFR)
+head(asks)
+
+# Retrieve 'bids' from data frame.
+bids <- as.numeric(TQ_df$BID)
+head(bids)
+
+# Compute the 'mid' or middle price between bid and ask.
+mids <- (bids + asks) * 0.5
+head(mids)
+
+# Establish minimum and maximum prices quoted.
+p_min <- min(as.numeric(TQ_df$PRICE))
+p_max <- max(as.numeric(TQ_df$PRICE))
+
+p_min
+p_max
+
+# Plot trade prices and respective best-bid and best-ask prices using the mid price.
+plot(as.numeric(TQ_df$PRICE), col = "green", type = "l", ylab = "Trade Price", 
+    xlab = "Trade Number", main = "Price Fluctuation", ylim = c(p_min - 0.2, p_max + 0.2))
+lines(mids, type = "l", col = "blue")
 ```
+
