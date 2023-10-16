@@ -1,0 +1,48 @@
+---
+title: "FE570 - Homework #2"
+subtitle: "I pledge my honor that I have abided by the Stevens Honor System."
+author: "Sid Bhatia"
+date: "2023-10-16"
+output: pdf_document
+---
+
+## Problem 2.1
+
+#### 1.
+
+```{r}
+# Load necessary packages.
+library(xts)
+library(highfrequency)
+
+# Load in data set.
+options(digits.secs=3)
+absolute_path <- 'C:/Users/sbhatia2/My Drive/University/Academics/Semester V/FE570 - Market Microstructure and Trading Strategies/FE570 - Homework/FE570 - Homework #2/'
+load(paste(absolute_path, "sampleTQdata.RData", sep = ""))
+
+# Added to remove warnings about time zone mismatch.
+Sys.setenv(TZ='GMT')
+
+head(tqdata)
+tail(tqdata)
+```
+
+##### i.
+
+How many trades are in the dataset?
+
+```{r}
+num_of_trades <- nrow(tqdata)
+num_of_trades
+```
+
+As seen above, there are 8153 trades in the dataset.
+
+##### ii.
+
+Plot the trade prices $p_t$ and the best-bid $b_t$ and best-ask prices $a_t$ for the entire dataset.
+
+```{r}
+TQ_df <- data.frame(Date = index(tqdata), tqdata)
+TQ_df
+```
