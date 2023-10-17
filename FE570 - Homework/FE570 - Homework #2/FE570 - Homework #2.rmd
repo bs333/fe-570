@@ -104,5 +104,36 @@ p_max_2
 # Plot trade prices and respective best-bid and best-ask prices using the mid price.
 plot(as.numeric(TQ_df_sliced$PRICE), col = "green", type = "l", ylab = "Trade Price", 
     xlab = "Trade Number", main = "Price Fluctuation", ylim = c(p_min_2 - 0.2, p_max_2 + 0.2))
-lines(mids, type = "l", col = "blue")
+lines(mids_2, type = "l", col = "blue")
+```
+
+#### 2.
+
+Count how many trades take place within the spread $(p_t \in (b_t, a_t))$, and how many at the touch $(p_t = b_t$ or 
+$p_t = a_t$). Give separately the three numbers, and test if their sum reproduces the total trade count from 1.i).
+
+```{r}
+bid <- sapply(TQ_df$BID, FUN = as.numeric)
+ask <- sapply(TQ_df$OFR, FUN = as.numeric)
+price <- sapply(TQ_df$PRICE, FUN = as.numeric)
+
+# Check for number of prices within the range.
+within <- length( which( (price > bid) & (price < ask) ) ) 
+
+# Check for number of prices outside the range.
+outside <- length( which ( (price < bid) | (price > ask) ) )
+
+# Check for number of prices at the bid.
+at_bid <- length( which( price == bid ) )
+
+# Check for number of prices at the offer.
+at_offer <- length( which( price == ask) )
+
+within
+outside
+at_bid
+at_offer
+
+# Check if sum equals the total number of trades (8153).
+sum(within, outside, at_bid, at_offer) == num_of_trades
 ```
