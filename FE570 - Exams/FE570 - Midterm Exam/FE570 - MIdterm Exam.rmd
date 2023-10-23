@@ -46,13 +46,15 @@ p_min
 p_max
 ```
 
+The number of trades is $\mathbf{58793}$ with the minimum price at $\mathbf{28534.75}$ and maximum price at $\mathbf{30407.50}$.
+
 #### ii.
 
 For each transaction, compute the spread measures:
 
 $$\text{Quoted Spread: qs_t = \text{Ask}_t - \text{Bid}_t}$$
 
-$$\text{Effective Spread: es_t = 2d_t(p_t - \text{mid_t})}$$.
+$$\text{Effective Spread: es_t = 2d_t(p_t - \text{Mid}_t)}$$.
 
 ```{r}
 # Compute the bids and asks for each transaction.
@@ -90,3 +92,29 @@ tail(effective_spread, 50)
 mean(quoted_spread)
 mean(effective_spread)
 ```
+
+The average quoted spread is $\mathbf{4.817}$ and the average effective spread is $\mathbf{1.957}$.
+
+#### iii.
+
+Compute the Roll's estimate of the bid-ask spread.
+
+```{r}
+dprice <- diff(price)
+
+ac_pr <- acf(dprice, lag.max=20, type="correlation", plot=FALSE)
+plot(ac_pr, col="red", main="Autocorrelation of Price Changes")
+
+covpr <- acf(dprice, lag.max=20, type="covariance", plot=FALSE)
+gamma1 <- covpr$acf[2]
+gamma1
+
+cparam <- sqrt(-covpr$acf[2])
+cparam
+
+roll_spread <- cparam * 2
+
+roll_spread
+```
+
+As such, the Roll's model estimate of the bid-ask spread is $\mathbf{4.756}$.
