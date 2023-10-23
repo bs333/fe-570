@@ -1,0 +1,73 @@
+---
+title: "FE570 - Homework #3"
+subtitle: "I pledge my honor that I have abided by the Stevens Honor System."
+author: "Sid Bhatia"
+date: "2023-10-23"
+output: pdf_document
+---
+
+Use the same dataset as in Assignment #2 and keep only the trades taking place in the time period 10:00 to 14:00.
+
+```{r}
+# Load necessary packages.
+library(xts)
+library(highfrequency)
+
+# Load in data set.
+options(digits.secs=3)
+absolute_path <- 'C:/Users/sbhatia2/My Drive/University/Academics/Semester V/FE570 - Market Microstructure and Trading Strategies/FE570 - Homework/FE570 - Homework #2/'
+load(paste(absolute_path, "sampleTQdata.RData", sep = ""))
+
+# Added to remove warnings about time zone mismatch.
+Sys.setenv(TZ='GMT')
+
+head(tqdata)
+tail(tqdata)
+
+# Filter data for trades between 10:00 and 14:00
+tqdata_filtered <- tqdata["T10:00/T14:00"]
+
+head(tqdata_filtered)
+tail(tqdata_filtered)
+```
+
+## Problem 1
+
+1. How many trades are taking place during this time?
+
+```{r}
+num_of_trades <- nrow(tqdata_filtered)
+
+num_of_trades
+```
+
+There are 4691 trades taking place during this time.
+
+2. Compute the Quoted Spread and Effective Spread, averaged over all trades.
+
+$$\text{Quoted Spread} = \text{Best Ask} - \text{Best Bid}$$
+
+$$\text{Effective Spread} = 2 * D_t * (\text{Price}_t - \frac{1]{2}(a_t + b_t))$$
+
+```{r}
+colnames(tqdata_filtered)
+
+# Retrieve liquidity measures using `highfrequency` package.
+liqudity_measures <- getLiquidityMeasures(tqdata_filtered)
+
+head(liqudity_measures$effectiveSpread)
+
+# Retrieve trade signs using Lee-Ready method.
+trade_signs <- getTradeDirection(tqdata_filtered)
+
+price <- as.numeric(tqdata_filtered$PRICE)
+mids <- (as.numeric(tqdata_filtered$OFR) + as.numeric(tqdata_filtered$BID)) / 2
+
+# Compute Quoted Spread.
+quoted_spread <- mean(as.numeric(tqdata_filtered$OFR) - as.numeric(tqdata_filtered$BID))
+quoted_spread
+
+# Compute Effective Spread.
+effective_spread <- mean(trade_signs * (price - mids))
+effective_spread    
+```
