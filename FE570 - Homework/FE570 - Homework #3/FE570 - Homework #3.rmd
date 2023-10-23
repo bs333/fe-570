@@ -71,3 +71,38 @@ quoted_spread
 effective_spread <- mean(trade_signs * (price - mids))
 effective_spread    
 ```
+
+3. Calibrate the Roll model to this data, and find the parameters $c$ (cost of trading) and $\sigma_u$ (volatility of the efficient price).
+
+```{r}
+# Calibrate Roll Model to data.
+
+dprice <- diff(price)
+ac_pr <- acf(dprice, lag.max=20, type="correlation", plot=FALSE)
+plot(ac_pr, col="red", main="Autocorrelation of Price Changes")
+
+covpr <- acf(dprice, lag.max=20, type="covariance", plot=FALSE)
+
+gamma0 <- sd(dprice)^2
+gamma0
+
+gamma1 <- cov_prices$acf[2]
+gamma1
+
+cparam <- sqrt(-covpr$acf[2])
+cparam
+
+sig2u <- gamma0 + 2 * gamma1
+sigu <- sqrt(sig2u)
+
+cparam
+sigu
+```
+
+As such, $c = 0.0158516$ and $\sigma_u =  0.04473154$.
+
+4. Compute the Roll model estimate for the bid-ask spread, and compare with the spreads computed in point 2. Which one do you think is more accurate?
+
+```{r}
+
+```
