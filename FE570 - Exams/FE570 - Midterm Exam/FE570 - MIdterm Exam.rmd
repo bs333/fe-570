@@ -1,0 +1,28 @@
+---
+title: "FE570 - Midterm Exam"
+subtitle: "I pledge my honor that I have abided by the Stevens Honor System."
+author: "Sid Bhatia"
+date: "2023-10-23"
+output: pdf_document
+---
+
+## Problem 11
+
+The data for this problem is contained in the file *taqdata BTCUSD.RData*. This is a trade-and-quote file giving the trade price, size, and the quotes at
+the time of each trade for Bitcoin trades during 24 hours (19-Apr-2023).
+
+```{r}
+# Load necessary packages.
+library(xts)
+library(highfrequency)
+
+# Load in data set.
+options(digits.secs=3)
+absolute_path <- 'C:/Users/sbhatia2/My Drive/University/Academics/Semester V/FE570 - Market Microstructure and Trading Strategies/FE570 - Exams/FE570 - Midterm Exam/'
+load(paste(absolute_path, "taqdata_BTCUSD.RData", sep = ""))
+
+# Added to remove warnings about time zone mismatch.
+Sys.setenv(TZ='GMT')
+
+head(tqdata, 10)
+```
