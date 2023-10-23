@@ -118,3 +118,91 @@ roll_spread
 ```
 
 As such, the Roll's model estimate of the bid-ask spread is $\mathbf{4.756}$.
+
+#### iv.
+
+Compare the trade sign in SIDE with the prediction of the Lee-Ready empirical rule. 
+
+What is the accuracy of the Lee-Ready rule? 
+
+This can be measured as the percentage of trade signs which are predicted correctly by the Lee-Ready rule.
+
+**Tick Test**: Use only the trade prices $p_t$, but not the quotes $a_t$ and $b_t$. Under the test, the trade is classified as a buy/sell according to:
+- $d_t = +1$ (buy) if $p_t > p_{t-1}$ (uptick) or if $p_t = p_{t-1} > p_{t-2}$ (zero-uptick)
+- $d_t = -1$ (sell) if $p_t < p_{t-1}$ (downtick) or if $p_t = p_{t-1} < p_{t-2}$ (zero-downtick)
+
+Note that zero-uptick/downtick results apply also if there are multiple (more than 2) trades with the same price.
+
+For example if the trade prices are $p_t = (19.9, 20.0, 20.0, 20.0)$ (increasing $t$ order), then the trade signs are (?, +, + , +).
+
+**Lee-Ready Rule**: Use both $p_t$ and quotes $a_t$ and $b_t$. The Lee-Ready Rule decides if a trade is a buy or sell by comparing the trade
+price $p_t$ with the mid-price $m_t = \frac{1}{2} (a_t + b_t)$ (the half-point between best-bid $b_t$ and best-ask $a_t$).
+
+If the trade price is exactly equal to the mid-price, $p_t = m_t$, then use the tick rule in point (i) above.
+
+```{r}
+# Create a function that implements the Tick Test.
+tick_test <- function(price)
+{
+    sign <- c(1)
+    for(i in 2:(length(price))) 
+    {
+        if(price[i] < price[i - 1])
+        {
+            sign <- c(sign, -1)
+        }
+        else if(price[i] > price[i - 1])
+        {
+            sign <- c(sign, 1)
+        }
+        else
+        {
+            sign <- c(sign, sign[i - 1])
+        }
+    }
+    return(sign)
+}
+
+# Create a function that implements the Lee-Ready Rule.
+lee_ready_rule <- function(price)
+{
+    tick <- tick_test(price)
+    sign <- c(1)
+    bid <- sapply(tqdata$BID, FUN = as.numeric)
+    ask <- sapply(tqdata$OFR, FUN = as.numeric)
+
+    for(i in 2:(length(price)))
+    {
+        mid <- (bid[i] + ask[i]) * 0.5
+
+        if(price[i] > mid)
+        {
+            sign <- c(sign, 1)
+        }
+        else if(price[i] < mid)
+        {
+            sign <- c(sign, -1)
+        }
+        else 
+        {
+            sign <- c(sign, tick[i])
+        }
+    }
+    return(sign)
+}
+
+Lee_Ready_Rule_TQ <- lee_ready_rule(price)
+
+Lee_Ready_Rule_Actual <- getTradeDirection(tqdata)
+
+# Check to see if Lee-Ready implementation is the same.
+length( which(Lee_Ready_Rule_Actual == Lee_Ready_Rule_TQ ) ) / length(Lee_Ready_Rule_TQ)
+
+
+# Check to see accuracy of Lee-Ready Rule.
+length( which(sign_converted ==  Lee_Ready_Rule_Actual) ) / length(sign_converted)
+length( which(sign_converted ==  Lee_Ready_Rule_TQ) ) / length(sign_converted)
+```
+
+As such, the Lee-Ready rule is $74.3\%$ accurate in terms of the trade signs it correctly predicted.
+
