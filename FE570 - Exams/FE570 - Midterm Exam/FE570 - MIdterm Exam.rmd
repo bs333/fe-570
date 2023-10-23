@@ -26,3 +26,20 @@ Sys.setenv(TZ='GMT')
 
 head(tqdata, 10)
 ```
+
+#### i.
+
+Report the number of trades in the dataset, and the minimum and maximum trade price during the time interval in the dataset.
+
+```{r}
+# Retrieve the number of trades in the dataset.
+num_of_trades <- nrow(tqdata)
+num_of_trades
+
+# Establish minimum and maximum prices quoted.
+p_min <- min(as.numeric(tqdata$PRICE))
+p_max <- max(as.numeric(tqdata$PRICE))
+
+p_min
+p_max
+```
