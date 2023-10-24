@@ -109,9 +109,18 @@ plot(ac_pr, col="red", main="Autocorrelation of Price Changes")
 # Compute the covariances of the price changes.
 covpr <- acf(dprice, lag.max=20, type="covariance", plot=FALSE)
 
-# Retrieve gamma1 as the covariances at lag 1.
+# Retrieve gamma1 as the covariance at lag 0.
+gamma0 <- covpr$acf[1]
+gamma0
+
+# Retrieve gamma1 as the covariance at lag 1.
 gamma1 <- covpr$acf[2]
 gamma1
+
+# Compute the volatility of the efficient price.
+sig2u <- gamma0 + 2 * gamma1
+sigu <- sqrt(sig2u)
+sigu
 
 # Compute the c paramater as the sqrt(-gamma1)
 cparam <- sqrt(-gamma1)
@@ -123,7 +132,7 @@ roll_spread <- cparam * 2
 roll_spread
 ```
 
-As such, the Roll's model estimate of the bid-ask spread is $\mathbf{4.756}$.
+As such, the Roll's model estimate of the bid-ask spread is $\mathbf{4.756}$ with $c = 2.378$ and $\sigma_u = 3.255$.
 
 #### iv.
 
