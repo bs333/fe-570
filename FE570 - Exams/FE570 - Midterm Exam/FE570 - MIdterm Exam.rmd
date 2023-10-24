@@ -109,7 +109,7 @@ plot(ac_pr, col="red", main="Autocorrelation of Price Changes")
 # Compute the covariances of the price changes.
 covpr <- acf(dprice, lag.max=20, type="covariance", plot=FALSE)
 
-# Retrieve gamma1 as the covariance at lag 0.
+# Retrieve gamma0 as the covariance at lag 0.
 gamma0 <- covpr$acf[1]
 gamma0
 

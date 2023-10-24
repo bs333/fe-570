@@ -41,7 +41,7 @@ num_of_trades <- nrow(tqdata_filtered)
 num_of_trades
 ```
 
-There are 4691 trades taking place during this time.
+There are $\mathbf{4691}$ trades taking place during this time.
 
 2. Compute the Quoted Spread and Effective Spread, averaged over all trades.
 
@@ -60,36 +60,46 @@ head(liqudity_measures$effectiveSpread)
 # Retrieve trade signs using Lee-Ready method.
 trade_signs <- getTradeDirection(tqdata_filtered)
 
+# Retrieve trading price, bid, ask, and mid prices, respectively.
 price <- as.numeric(tqdata_filtered$PRICE)
-mids <- (as.numeric(tqdata_filtered$OFR) + as.numeric(tqdata_filtered$BID)) / 2
+bid <- as.numeric(tqdata_filtered$BID)
+ask <- as.numeric(tqdata_filtered$OFR)
+
+mids <- (bid + ask) / 2
 
 # Compute Quoted Spread.
 quoted_spread <- mean(as.numeric(tqdata_filtered$OFR) - as.numeric(tqdata_filtered$BID))
 quoted_spread
 
 # Compute Effective Spread.
-effective_spread <- mean(trade_signs * (price - mids))
+effective_spread <- mean(2 * trade_signs * (price - mids))
 effective_spread    
 ```
+
+As such, the average quoted spread is $\mathbf{0.084}$$ and the average effective spread is $\mathbf{0.079}$.
 
 3. Calibrate the Roll model to this data, and find the parameters $c$ (cost of trading) and $\sigma_u$ (volatility of the efficient price).
 
 ```{r}
-# Calibrate Roll Model to data.
-
+# Calculate the difference in price changes.
 dprice <- diff(price)
+
+# Compute and plot the autocorrelation of price changes.
 ac_pr <- acf(dprice, lag.max=20, type="correlation", plot=FALSE)
 plot(ac_pr, col="red", main="Autocorrelation of Price Changes")
 
+# Compute the covariances of the price changes.
 covpr <- acf(dprice, lag.max=20, type="covariance", plot=FALSE)
 
-gamma0 <- sd(dprice)^2
+# Retrieve gamma0 as the covariance at lag 0.
+gamma0 <- covpr$acf[1]
 gamma0
 
-gamma1 <- cov_prices$acf[2]
+# Retrieve gamma1 as the covariance at lag 1.
+gamma1 <- covpr$acf[2]
 gamma1
 
-cparam <- sqrt(-covpr$acf[2])
+cparam <- sqrt(-gamma1)
 cparam
 
 sig2u <- gamma0 + 2 * gamma1
@@ -99,10 +109,23 @@ cparam
 sigu
 ```
 
-As such, $c = 0.0158516$ and $\sigma_u =  0.04473154$.
+As such, $c = 0.0159$ and $\sigma_u =  0.0447$.
 
 4. Compute the Roll model estimate for the bid-ask spread, and compare with the spreads computed in point 2. Which one do you think is more accurate?
 
 ```{r}
-
+roll_spread <- cparam * 2
+roll_spread
 ```
+
+As such, the Roll's model estimate of the bid-ask spread is $\mathbf{0.0317}$. 
+
+I believe the quoted and effective spreads are more accurate since they are closer in difference to one another and the effective spread captures the real cost of trading, as it takes into consideration the price improvement or disimprovement a trader receives compared to the quoted spread.
+
+The quoted spread is the difference between the best bid and the best ask prices in the market. It is an explicit measure and is easily observable in markets with transparent limit order books. The quoted spread gives a direct measure of the cost to trade immediately using market orders. However, it does not always capture the actual cost of trading, especially in markets where the best bid and ask prices might not represent substantial volume or where traders frequently transact inside the quoted spread.
+
+Roll's measure is an implicit measure of the bid-ask spread derived from serial price changes in the absence of trade data. It is based on the covariance between consecutive price changes. While Roll's model provides an estimate of the spread in markets where direct spread measures are not observable, it assumes that prices follow a random walk and that there's no other noise in the price process besides the bid-ask bounce. In reality, other factors, such as volatility and market microstructure effects, can affect price changes, so Roll's measure can be imprecise in many real-world contexts.
+
+As such, the effective spread, quoted spread, and Roll's model estimate for bid-ask spread would be the order from most to least accurate.
+
+
