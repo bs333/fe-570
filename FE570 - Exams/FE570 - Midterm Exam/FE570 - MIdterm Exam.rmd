@@ -8,8 +8,7 @@ output: pdf_document
 
 ## Problem 11
 
-The data for this problem is contained in the file *taqdata BTCUSD.RData*. This is a trade-and-quote file giving the trade price, size, and the quotes at
-the time of each trade for Bitcoin trades during 24 hours (19-Apr-2023).
+The data for this problem is contained in the file *taqdata BTCUSD.RData*. This is a trade-and-quote file giving the trade price, size, and the quotes at the time of each trade for Bitcoin trades during 24 hours (19-Apr-2023).
 
 ```{r}
 # Load necessary packages.
@@ -100,18 +99,25 @@ The average quoted spread is $\mathbf{4.817}$ and the average effective spread i
 Compute the Roll's estimate of the bid-ask spread.
 
 ```{r}
+# Calculate the difference in price changes.
 dprice <- diff(price)
 
+# Compute and plot the autocorrelation of price changes.
 ac_pr <- acf(dprice, lag.max=20, type="correlation", plot=FALSE)
 plot(ac_pr, col="red", main="Autocorrelation of Price Changes")
 
+# Compute the covariances of the price changes.
 covpr <- acf(dprice, lag.max=20, type="covariance", plot=FALSE)
+
+# Retrieve gamma1 as the covariances at lag 1.
 gamma1 <- covpr$acf[2]
 gamma1
 
-cparam <- sqrt(-covpr$acf[2])
+# Compute the c paramater as the sqrt(-gamma1)
+cparam <- sqrt(-gamma1)
 cparam
 
+# Compute the spread as 2 * the c parameter.
 roll_spread <- cparam * 2
 
 roll_spread
