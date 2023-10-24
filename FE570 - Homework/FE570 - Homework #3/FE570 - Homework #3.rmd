@@ -47,7 +47,7 @@ There are $\mathbf{4691}$ trades taking place during this time.
 
 $$\text{Quoted Spread} = \text{Best Ask} - \text{Best Bid}$$
 
-$$\text{Effective Spread} = 2 * D_t * (\text{Price}_t - \frac{1]{2}(a_t + b_t))$$
+$$\text{Effective Spread} = 2 * D_t * (\text{Price}_t - \frac{1}{2} (a_t + b_t))$$
 
 ```{r}
 colnames(tqdata_filtered)
@@ -68,7 +68,7 @@ ask <- as.numeric(tqdata_filtered$OFR)
 mids <- (bid + ask) / 2
 
 # Compute Quoted Spread.
-quoted_spread <- mean(as.numeric(tqdata_filtered$OFR) - as.numeric(tqdata_filtered$BID))
+quoted_spread <- mean(ask - bid)
 quoted_spread
 
 # Compute Effective Spread.
@@ -76,7 +76,7 @@ effective_spread <- mean(2 * trade_signs * (price - mids))
 effective_spread    
 ```
 
-As such, the average quoted spread is $\mathbf{0.084}$$ and the average effective spread is $\mathbf{0.079}$.
+As such, the average quoted spread is $\mathbf{0.084}$and the average effective spread is $\mathbf{0.079}$.
 
 3. Calibrate the Roll model to this data, and find the parameters $c$ (cost of trading) and $\sigma_u$ (volatility of the efficient price).
 
