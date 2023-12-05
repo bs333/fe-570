@@ -1,0 +1,7 @@
+---
+title: "FE570 - Homework #4"
+subtitle: "I pledge my honor that I have abided by the Stevens Honor System."
+author: "Sid Bhatia"
+date: "2023-12-04"
+output: pdf_document
+---
