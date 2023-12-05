@@ -5,3 +5,20 @@ author: "Sid Bhatia"
 date: "2023-12-04"
 output: pdf_document
 ---
+
+**Glosten-Harris model**. The Glosten-Harris model is an improvement of the Roll model which takes into account:
+
+- Bid-ask bounce: $cd_t$
+- Price impact: $\lambdax_t$
+
+In this model, trade price $p_t$ is given by:
+
+$$p_t = m_t + cd_t + \lambda x_t$$
+
+where the efficient price $m_t$ contains a price impact $\lambda x_{t-1}$ due to the previous trade:
+
+$$m_t = m_{t-1} + \lambda x_{t-1} + \mu_t$$
+
+Here, $u_t$ are iid random variables with mean zero and variance $\sigma_u^2$, similar to the Roll model.
+
+Note that here, $x_t$ are *signed* trade sizes: positive for buy, negative for sell.
