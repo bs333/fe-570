@@ -29,3 +29,29 @@ Calibrate the $\lambda$, $c$ parameters of this model using the provided TAQ dat
 
 For this analysis it is important to exclude from the analysis large trades at the start and end of the trading session. For example, keep only trades
 with time stamps between 10:00 - 14:00.
+
+## Hints
+
+First, we need the signed trade sizes $x_t = d_t |x_t|$, where $d_t$ are the trade indicators and $|x_t|$ are the absolute errors of the trade size which are available in the TAQ data as `r tqdata$SIZE`.
+
+We get the trade indicators using the `r getTradeDirection(tqdata)` which is the implementation of the Lee-Ready mid-point criterion.
+
+```{r}
+# Load necessary packages.
+library(xts)
+library(highfrequency)
+
+# Load in data set.
+options(digits.secs=3)
+
+absolute_path <- 'C:/Users/sbhatia2/My Drive/University/Academics/Semester V/FE570 - Market Microstructure and Trading Strategies/FE570 - Homework/FE570 - Homework #4/'
+load(paste(absolute_path, "taqdata_KO_20220301v1.RData", sep = ""))
+
+# Added to remove warnings about time zone mismatch.
+Sys.setenv(TZ='GMT')
+
+head(tqdata)
+tail(tqdata)
+```
+
+
