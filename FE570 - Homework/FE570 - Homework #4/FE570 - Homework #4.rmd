@@ -22,3 +22,10 @@ $$m_t = m_{t-1} + \lambda x_{t-1} + \mu_t$$
 Here, $u_t$ are iid random variables with mean zero and variance $\sigma_u^2$, similar to the Roll model.
 
 Note that here, $x_t$ are *signed* trade sizes: positive for buy, negative for sell.
+
+## Question
+
+Calibrate the $\lambda$, $c$ parameters of this model using the provided TAQ dataset. The dataset provided contains trades and quotes for KO (Coca-Cola) on 1-Mar-2022.
+
+For this analysis it is important to exclude from the analysis large trades at the start and end of the trading session. For example, keep only trades
+with time stamps between 10:00 - 14:00.
