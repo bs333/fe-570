@@ -52,6 +52,41 @@ Sys.setenv(TZ='GMT')
 
 head(tqdata)
 tail(tqdata)
+
+# Convert DT column to datetime format.
+tqdata$DT <- as.POSIXct(tqdata$DT, format="%Y-%m-%d %H:%M:%OS")
+
+head(tqdata$DT)
+
+# Calculate mid-price (efficient price) at the time of the trade.
+tqdata$MID_PRICE <- (tqdata$BID + tqdata$OFR) / 2
+
+# Get trade directions using Lee-Ready mid-point criterion.
+tqdata$TRADE_DIRECTION <- getTradeDirection(tqdata)
+
+head(tqdata$TRADE_DIRECTION)
+
+# Calculate signed-size x_t based on d_t * |x_t|.
+tqdata$SIGNED_SIZE <- tqdata$TRADE_DIRECTION * tqdata$SIZE
+
+head(tqdata$SIGNED_SIZE)
+
+# Shift MID_PRICE and SIGNED_SIZE to get previous values.
+tqdata$Lagged_MID_PRICE <- lag.xts(tqdata$MID_PRICE, k = 1)
+tqdata$Lagged_SIGNED_SIZE <- lag.xts(tqdata$SIGNED_SIZE, k = 1)
+
+head(tqdata)
+
+# Prepare the dependent variable (p_t - m_t).
+tqdata$PT_MINUS_MT <- tqdata$PRICE - tqdata$MID_PRICE
+
+# Linear regression to estimate lambda and c.
+model <- lm(PT_MINUS_MT ~ SIGNED_SIZE + TRADE_DIRECTION, data = tqdata)
+
+# Output the model summary to get the estimates of lambda and c
+summary(model)
 ```
+
+
 
 
